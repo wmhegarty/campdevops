@@ -1,12 +1,17 @@
 # myapp.rb
 require 'sinatra'
 
+require 'mongo'
+# connecting to the database
+client = Mongo::Connection.new('mongodb')
+db     = client['example-db']
+coll   = db['example-collection']
+
 get '/' do
-   puts	"called"
-  'Hello world!'
+  cursor = coll.find(:foo => 'bar')	
+  " foo :  #{cursor.first}" 
 end
 
 get '/test' do
-   puts	"called"
   'Test the World!'
 end

@@ -7,7 +7,10 @@ RUN apt-get install -y --force-yes zlib1g-dev libssl-dev libreadline-dev libyaml
 RUN apt-get clean
 
 RUN apt-get install ruby -y
+RUN apt-get install ruby1.9.1-dev -y
 
+RUN gem install mongo
+RUN gem install bson_ext
 RUN gem install sinatra --no-ri --no-rdoc
 
 RUN groupadd app &&  useradd -g app -d /home/app -m app
