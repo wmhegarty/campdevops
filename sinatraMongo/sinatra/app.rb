@@ -8,10 +8,7 @@ db     = client['example-db']
 coll   = db['example-collection']
 
 get '/' do
-  cursor = coll.find(:foo => 'bar')	
-  " foo :  #{cursor.first}" 
-end
-
-get '/test' do
-  'Test the World!'
+  cursor = coll.find(:lastname => 'Sled')	
+  item = cursor.first
+  "First Name :  #{item['firstname']}<br/>Last Name : #{item['lastname']}" 
 end

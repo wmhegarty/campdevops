@@ -37,7 +37,7 @@ task startMongo << {
     docker.runImage("mongodb", "latest",options)
     def mongo = new GMongo('192.168.59.103')
     def db = mongo.getDB("example-db")
-    db['example-collection'].insert(['_id' : 'myid','foo' : 'bar' , 'baz' : 'boom'])
+    db['example-collection'].insert(['_id' : 'myid','firstname' : 'Bob' , 'lastname' : 'Sled'])
 }
 
 task stopApp << {
@@ -49,5 +49,13 @@ task stopMongo << {
     docker.stopContainer('mongodb')
     docker.removeContainer('mongodb')
 }
+
+task updateData << {
+    def mongo = new GMongo('192.168.59.103')
+    def db = mongo.getDB("example-db")
+    db['example-collection'].update(['_id' : 'myid'],['firstname' : 'Robert' , 'lastname' : 'Sled'])
+}
+
+task newApp(dependsOn: [stopApp,startApp])
 
 task runAll(dependsOn: [buildApp,buildMongo,startMongo,startApp])
