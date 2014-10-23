@@ -24,6 +24,10 @@ task buildMongo << {
     docker.build("mongodb","latest",'./mongodb')
 }
 
+task buildData << {
+    docker.build("data-volume","latest",'./data-volume')
+}
+
 task startApp << {
     def options = [ ports: ['4567:4567'],
                     name: "app",
@@ -33,11 +37,15 @@ task startApp << {
 
 task startMongo << {
     def options = [ ports: ['27017:27017',"28017:28017"],
-                    name: "mongodb"]
+                    name: "mongodb",
+                    volumesFrom: ['data-volume']]
+
     docker.runImage("mongodb", "latest",options)
-    def mongo = new GMongo('192.168.59.103')
-    def db = mongo.getDB("example-db")
-    db['example-collection'].insert(['_id' : 'myid','firstname' : 'Bob' , 'lastname' : 'Sled'])
+
+}
+
+task startData << {
+    docker.runImage("data-volume", "latest",[name: "data-volume"])
 }
 
 task stopApp << {
@@ -50,10 +58,26 @@ task stopMongo << {
     docker.removeContainer('mongodb')
 }
 
+task createData << {
+    def mongo = new GMongo('192.168.59.103')
+    def db = mongo.getDB("example-db")
+    db['example-collection'].insert(['_id' : 'myid','firstname' : 'Bob' , 'lastname' : 'Sled'])
+}
+
 task updateData << {
     def mongo = new GMongo('192.168.59.103')
     def db = mongo.getDB("example-db")
     db['example-collection'].update(['_id' : 'myid'],['firstname' : 'Robert' , 'lastname' : 'Sled'])
+}
+
+task exportData <<
+{
+    docker.exportContainer('data-volume')
+}
+
+task importData <<
+{
+    docker.exportContainer('data-volume')
 }
 
 task newApp(dependsOn: [stopApp,startApp])
