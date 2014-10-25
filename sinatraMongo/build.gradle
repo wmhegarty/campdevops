@@ -58,7 +58,13 @@ task stopMongo << {
     docker.removeContainer('mongodb')
 }
 
+task stopData << {
+    docker.stopContainer('data-volume')
+    docker.removeContainer('data-volume')
+}
+
 task createData << {
+    sleep(2*1000)
     def mongo = new GMongo('192.168.59.103')
     def db = mongo.getDB("example-db")
     db['example-collection'].insert(['_id' : 'myid','firstname' : 'Bob' , 'lastname' : 'Sled'])
@@ -82,4 +88,7 @@ task importData <<
 
 task newApp(dependsOn: [stopApp,startApp])
 
-task runAll(dependsOn: [buildApp,buildMongo,startMongo,startApp])
+task stopAll(dependsOn: [stopApp,stopMongo,stopData])
+
+task runAll(dependsOn: [buildApp,buildMongo,buildData,startData,startMongo,startApp,createData])
+
