@@ -10,5 +10,5 @@ coll   = db['example-collection']
 get '/' do
   cursor = coll.find(:lastname => 'Sled')	
   item = cursor.first
-  "<H1>Employee</H1>First Name :  #{item['firstname']}<br/>Last Name : #{item['lastname']}" 
+  "First Name :  #{item['firstname']}<br/>Last Name : #{item['lastname']}" 
 end
